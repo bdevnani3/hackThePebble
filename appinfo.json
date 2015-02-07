@@ -4,8 +4,8 @@
         ""
     ],
     "companyName": "bhavika.devnani@gmail.com",
-    "longName": "Ow",
-    "projectType": "simplyjs",
+    "longName": "Am I Drunk",
+    "projectType": "pebblejs",
     "resources": {
         "media": [
             {
@@ -20,14 +20,19 @@
                 "type": "png"
             },
             {
+                "file": "images/tile_splash.png",
+                "name": "IMAGE_TILE_SPLASH",
+                "type": "png"
+            },
+            {
                 "file": "fonts/UbuntuMono-Regular.ttf",
                 "name": "MONO_FONT_14",
                 "type": "font"
             }
         ]
     },
-    "shortName": "Ow",
-    "uuid": "7d3283b2-654d-4b13-a144-88c68bcccf88",
+    "shortName": "Am I Drunk",
+    "uuid": "4d0a3be8-de62-44f7-94f5-8f2b0276176e",
     "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {
