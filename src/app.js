@@ -1,4 +1,4 @@
-  /**
+/**
    * Welcome to Pebble.js!
    *
    * This is where you write your app.
@@ -34,6 +34,7 @@
     wind.show();
     wind.on('click', 'select', function(e) {
       textfield.size(new Vector2(130,30));
+      textfield.text("Testing you walk....");
       var sum, sum1, sum2, sum3, n;
       sum = 0;
       sum1 = 0;
@@ -56,10 +57,10 @@
           sum3 += (e.accel.z + 1000)*(e.accel.z + 1000);
           n++;
           
-          console.log("Average: " + Math.sqrt(sum1/n) + ' ' + Math.sqrt(sum2/n) + ' ' + Math.sqrt(sum3/n)); // '(' + x + ", " + y + ", " + ", " + z + ")"
-        } else if (!done && dt < (1+10)*1000) {
+          } else if (!done && dt > (1+10)*1000) {
           // done processing!
-          console.log("Done. Average: " + Math.sqrt(sum1/n) + ' ' + Math.sqrt(sum2/n) + ' ' + Math.sqrt(sum3/n)); // '(' + x + ", " + y + ", " + ", " + z + ")"
+          done = true;
+          textfield.text("Done. Average: " + Math.sqrt(sum1/n) + ' ' + Math.sqrt(sum2/n) + ' ' + Math.sqrt(sum3/n)); // '(' + x + ", " + y + ", " + ", " + z + ")"
         }
       });
     });
