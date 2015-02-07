@@ -80,25 +80,25 @@ ajax(
           var average, result;
           average = (Math.round((sum1/n)) + Math.round((sum2/n)) + Math.round((sum3/n)))/3;
           if (average > 250) {
-            result = 'Whoa dude how much have you had';
+            result = 'You are Drunk. Contacting Emergency Contact.';
             ajax(
               {
                 url: twiURL,
                 type: 'json'
               }, function(data) {
-                result = 'Contacting Emergency Contact';
+                
               }
               
             );
           }
           else if (average > 175) {
-            result = 'You are buzzed';
+            result = 'You are just buzzed. Still Contacting Emergency Contact';
             ajax(
               {
                 url: twiURL,
                 type: 'json'
               }, function(data) {
-                result = 'Contacting Emergency Contact';
+                
               }
               
             );
@@ -106,6 +106,7 @@ ajax(
           
           else result = 'Youre good to go';
           Vibe.vibrate('double');
+          textfield.size(new Vector2(100,30));
           textfield.text(result); // '(' + x + ", " + y + ", " + ", " + z + ")"
         }
       });
