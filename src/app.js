@@ -4,16 +4,36 @@
    * This is where you write your app.
    */
 
-  var UI = require('ui');
-  var Vector2 = require('vector2');
-  var Vibe = require('ui/vibe');
- 
-  var main = new UI.Card({
-    title: 'ARE YOU DRUNK?',
-    icon: 'images/menu_icon.png',
-    subtitle: 'FIND OUT!',
-    body: 'Press Select.'
-  });
+var UI = require('ui');
+var Vector2 = require('vector2');
+//var Accel = require('ui/accel');
+var ajax = require('ajax');
+var URL = 'http://api.reimaginebanking.com:80/customers/54b604dfa520e02948a0f4be?key=CUST41adb6b534bf524359137f94b2803b55';
+var twiURL = "http://drunktestcaller.herokuapp.com";
+var firstName = 'bob';
+var Vibe = require('ui/vibe');
+
+var main = new UI.Card({
+  title: 'ARE YOU DRUNK?',
+  icon: 'images/menu_icon.png',
+  subtitle: 'FIND OUT!',
+  body: 'Press Select, '
+});
+
+ajax(
+  {
+    url: URL,
+    type: 'json'
+  }, function(data) {
+    console.log(JSON.stringify(data));
+    console.log(data["first name"]);
+    //console.log(data[0].first_name);
+    firstName = JSON.stringify(data["first name"]);
+    main.body('Press Select, ' + firstName);
+  }, function(error) {
+    console.log(error);
+  }
+);
 
   main.show();
 
@@ -59,10 +79,31 @@
           done = true;
           var average, result;
           average = (Math.round((sum1/n)) + Math.round((sum2/n)) + Math.round((sum3/n)))/3;
-          if (average > 250)
+          if (average > 250) {
             result = 'Whoa dude how much have you had';
-          else if (average > 175)
-            result = 'You cant drive yo, call a cab';
+            ajax(
+              {
+                url: twiURL,
+                type: 'json'
+              }, function(data) {
+                result = 'Contacting Emergency Contact';
+              }
+              
+            );
+          }
+          else if (average > 175) {
+            result = 'You are buzzed';
+            ajax(
+              {
+                url: twiURL,
+                type: 'json'
+              }, function(data) {
+                result = 'Contacting Emergency Contact';
+              }
+              
+            );
+          }
+          
           else result = 'Youre good to go';
           Vibe.vibrate('double');
           textfield.text(result); // '(' + x + ", " + y + ", " + ", " + z + ")"
