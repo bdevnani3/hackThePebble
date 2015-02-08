@@ -13,6 +13,15 @@ var twiURL = "http://drunktestcaller.herokuapp.com/drunk";
 var firstName = 'bob';
 var Vibe = require('ui/vibe');
 
+var SM = require('strap-metrics');
+var strapMetricsParms = {
+    app_id: "GYau3AEmmfBcWxdhh",
+    resolution: "144x168",
+    useragent: "PEBBLE/2.0"
+};
+
+SM.Init(strapMetricsParms);
+
 var main = new UI.Card({
   title: 'ARE YOU DRUNK?',
   image: 'images/menu_icon.png',
@@ -36,6 +45,7 @@ ajax(
 );
 
   main.show();
+  SM.Log('/main/show');
 
   main.on('click', 'select', function(e) {
     var wind = new UI.Window();
@@ -47,7 +57,9 @@ ajax(
       textAlign: 'center'
     });
     wind.add(textfield);
+    wind.scrollable = true;
     wind.show();
+    SM.Log('/wind/show');
     wind.on('click', 'select', function(e) {
       Vibe.vibrate('short');
       textfield.size(new Vector2(130,30));
