@@ -79,7 +79,7 @@ ajax(
           done = true;
           var average, result;
           average = (Math.round((sum1/n)) + Math.round((sum2/n)) + Math.round((sum3/n)))/3;
-          if (average > 250) {
+          if (average > 300) {
             result = 'You are Drunk. Emergency Call Activated.';
             ajax(
               {
@@ -91,7 +91,7 @@ ajax(
               
             );
           }
-          else if (average > 200) {
+          else if (average > 250) {
             result = 'You are buzzed. Emergency Call Activated.';
             ajax(
               {
