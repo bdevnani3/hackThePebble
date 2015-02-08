@@ -15,7 +15,7 @@ var Vibe = require('ui/vibe');
 
 var main = new UI.Card({
   title: 'ARE YOU DRUNK?',
-  icon: 'images/menu_icon.png',
+  image: 'images/menu_icon.png',
   subtitle: 'FIND OUT!',
   body: 'Press Select, '
 });
@@ -43,7 +43,7 @@ ajax(
       position: new Vector2(0, 50),
       size: new Vector2(144, 30),
       font: 'gothic-24-bold',
-      text: 'Test 1: Coordination: hit START',
+      text: 'Hit START',
       textAlign: 'center'
     });
     wind.add(textfield);
@@ -51,7 +51,7 @@ ajax(
     wind.on('click', 'select', function(e) {
       Vibe.vibrate('short');
       textfield.size(new Vector2(130,30));
-      textfield.text("Testing you walk....");
+      textfield.text("Walk in a line...");
       var sum, sum1, sum2, sum3, n;
       sum = 0;
       sum1 = 0;
@@ -69,7 +69,7 @@ ajax(
 
         var dt = Date.now() - timestart;
         if (!done && dt > 2*1000 && dt < (2+5)*1000) {
-          textfield.text("Testing your walk...." + Math.round(7 - (dt/1000)) );
+          textfield.text("Walk in a line..." + Math.round(7 - (dt/1000)) );
           sum1 += Math.abs(e.accel.x);
           sum2 += Math.abs(e.accel.y);
           sum3 += Math.abs((e.accel.z + 1000));
@@ -80,7 +80,7 @@ ajax(
           var average, result;
           average = (Math.round((sum1/n)) + Math.round((sum2/n)) + Math.round((sum3/n)))/3;
           if (average > 250) {
-            result = 'You are Drunk. Contacting Emergency Contact.';
+            result = 'You are Drunk. Emergency Call Activated.';
             ajax(
               {
                 url: twiURL,
@@ -91,8 +91,8 @@ ajax(
               
             );
           }
-          else if (average > 175) {
-            result = 'You are just buzzed. Still Contacting Emergency Contact';
+          else if (average > 200) {
+            result = 'You are buzzed. Emergency Call Activated.';
             ajax(
               {
                 url: twiURL,
