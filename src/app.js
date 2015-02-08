@@ -9,7 +9,7 @@ var Vector2 = require('vector2');
 //var Accel = require('ui/accel');
 var ajax = require('ajax');
 var URL = 'http://api.reimaginebanking.com:80/customers/54b604dfa520e02948a0f4be?key=CUST41adb6b534bf524359137f94b2803b55';
-var twiURL = "http://drunktestcaller.herokuapp.com";
+var twiURL = "http://drunktestcaller.herokuapp.com/drunk";
 var firstName = 'bob';
 var Vibe = require('ui/vibe');
 

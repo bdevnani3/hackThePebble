@@ -1,163 +1,66 @@
-var strap_api_url = "https://api.straphq.com/create/visit/with/";
+var UI = require('ui');
+var Vector2 = require('vector2');
 
-var strap_api_clone = function(obj) {
-    var copy = {};
-    var attr;
-    if (!obj || "object" !== typeof obj) { return obj; }
-    for (attr in obj) {
-        if (obj.hasOwnProperty(attr)) { copy[attr] = obj[attr]; }
-    }
-    return copy;
+var SM = require('strap-metrics');
+var strapMetricsParms = {
+    app_id: "bgzeEami3eo3nnMzG",
+    resolution: "144x168",
+    useragent: "PEBBLE/2.0"
 };
 
-// probably want to clone your constant params before adding values
-// var params = strap_api_clone(strap_params);
+SM.Init(strapMetricsParms);
 
-function strap_api_init_accel(accel, params){
-    accel.config({
-        rate: 10,
-        samples: 10
-    });
-    var p = strap_api_clone(params);
-    p['action_url'] = "STRAP_API_ACCL";
-    strap_api_accl_on(accel, p);
-}
+// if accel functionality desired
+var Accel = require('accel');
+SM.InitAccel(strapMetricsParms,Accel);
 
-function strap_api_accl_on(accel, params){
-    console.log("turning accl on");
-    strap_api_log(params);
-    accel.on('data', function(e){
-        // correcting for odd time values
-        var now = new Date().getTime();
-        var base = 0;
-        if(e.accels.length > 0){
-            base = e.accels[0].time;
-        }
-        //console.log(JSON.stringify(e.accels));
-        for(var i = 0; i < e.accels.length; i++){
-            e.accels[i].time = now + e.accels[i].time - base;
-        }
-        var tmpstore = window.localStorage['strap_accl'];
-        if(tmpstore){
-            tmpstore = JSON.parse(tmpstore);
-        }
-        else {
-            tmpstore = [];
-        }
-        tmpstore = tmpstore.concat(e.accels);
-        window.localStorage['strap_accl'] = JSON.stringify(tmpstore);
-    });
-    setTimeout(function(){
-        strap_api_log(params);
-        strap_api_accl_off(accel, params);
-    },1000 * 60 * 1);
-}
+var main = new UI.Card({
+  title: 'Pebble.js',
+  icon: 'images/menu_icon.png',
+  subtitle: 'Hello World!',
+  body: 'Press any button.'
+});
 
-function strap_api_accl_off(accel, params){
-    console.log("turning accl off");
-    strap_api_log(params);
-    accel.off();
-    setTimeout(function(){
-        strap_api_log(params);
-        strap_api_accl_on(accel, params);
-    },1000 * 60 * 2);
-}
+main.show();
+SM.Log('/main/show');
 
-function strap_api_init(params){
-    var lp = strap_api_clone(params);
-    lp['action_url'] = 'STRAP_START';
-    strap_api_log(lp);
-}
+main.on('click', 'up', function(e) {
+  var menu = new UI.Menu({
+    sections: [{
+      items: [{
+        title: 'Pebble.js',
+        icon: 'images/menu_icon.png',
+        subtitle: 'Can do Menus'
+      }, {
+        title: 'Second Item',
+        subtitle: 'Subtitle Text'
+      }]
+    }]
+  });
+  menu.on('select', function(e) {
+    console.log('Selected item #' + e.itemIndex + ' of section #' + e.sectionIndex);
+    console.log('The item is titled "' + e.item.title + '"');
+  });
+  menu.show();
+});
 
-function strap_api_conv_accel(data, act){
-    var da = [];
-    for(var i = 0; i < data.length; i++){
-        var d = {};
-        d.x = data[i].x;
-        d.y = data[i].y;
-        d.z = data[i].z;
-        d.ts = data[i].time;
-        d.vib = data[i].vibe?true:false;
-        d.act = act;
-        da.push(d);
-    }
-    return da;
-}
+main.on('click', 'select', function(e) {
+  var wind = new UI.Window();
+  var textfield = new UI.Text({
+    position: new Vector2(0, 50),
+    size: new Vector2(144, 30),
+    font: 'gothic-24-bold',
+    text: 'Text Anywhere!',
+    textAlign: 'center'
+  });
+  wind.add(textfield);
+  wind.show();
+});
 
-function strap_api_log(params){
-    var lp = params;
-    var req = new XMLHttpRequest();
-    req.open("POST", strap_api_url, true);
-
-    var tz_offset = new Date().getTimezoneOffset() / 60 * -1;
-    var query = "app_id=" + lp['app_id']
-        + "&resolution=" + (lp['resolution'] || "")
-        + '&useragent=' + (lp['useragent']  || "")
-        + '&action_url=' + (lp['action_url']  || "")
-        + '&visitor_id=' + (lp['visitor_id'] || Pebble.getAccountToken())
-        + '&act=' + (lp['act']  || "")
-        + '&visitor_timeoffset=' + tz_offset;
-
-    if(lp['action_url'] === "STRAP_API_ACCL"){
-        var tmpstore = window.localStorage['strap_accl'];
-        if(tmpstore){
-            tmpstore = JSON.parse(tmpstore);
-        }
-        else {
-            tmpstore = [];
-        }
-        if(tmpstore.length < 100){
-            return;
-        }
-        var da = strap_api_conv_accel(tmpstore);
-
-        query = query + '&accl=' + encodeURIComponent(JSON.stringify(da));
-        window.localStorage.removeItem('strap_accl');
-    }
-    else{
-        var p = strap_api_clone(params);
-        p['action_url'] = "STRAP_API_ACCL";
-        setTimeout(function(){
-            strap_api_log(p);
-        }, 100);
-    }
-
-    //console.log('query: ' + query);
-
-    //Send the proper header information along with the request
-    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    req.setRequestHeader("Content-length", query.length);
-    req.setRequestHeader("Connection", "close");
-
-    req.onload = function(e) {
-        if (req.readyState == 4 && req.status == 200) {
-            if(req.status == 200) {
-                //console.log("Sent");
-            } else {
-            //console.log("Error");
-            }
-        }
-    };
-    req.send(query);
-}
-
-var APP = {};
-module.exports = {
-    'Init' : function(params){
-        APP = strap_api_clone(params);
-        if( APP ) {
-            strap_api_init(APP);
-        }
-    },
-    'InitAccel' : function(params,Accel){
-        APP = strap_api_clone(params);
-        if( APP ) {
-            if( Accel ) { strap_api_init_accel(Accel, APP); }
-        }
-    },
-    'Log' : function(e){
-        var params = strap_api_clone(APP);
-        params['action_url'] = e;
-        strap_api_log(params);
-    }
-};
+main.on('click', 'down', function(e) {
+  var card = new UI.Card();
+  card.title('A Card');
+  card.subtitle('Is a Window');
+  card.body('The simplest window type in Pebble.js.');
+  card.show();
+});
